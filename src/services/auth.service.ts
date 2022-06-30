@@ -1,6 +1,7 @@
 import cookies from "js-cookie";
 import { COOKIE_EXPIRES, COOKIE_KEYS } from "../constants/cookie";
 import { api } from "../utils/api";
+import { setAuthCookies } from "../utils/cookie";
 
 type SignupAgreements = {
   privacy: boolean;
@@ -27,12 +28,7 @@ class AuthService {
       },
     });
 
-    cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
-      expires: COOKIE_EXPIRES.A_DAY,
-    });
-    cookies.set(COOKIE_KEYS.REFRESH_TOKEN, data.refresh, {
-      expires: COOKIE_EXPIRES.A_WEEK,
-    });
+    setAuthCookies(data.access, data.refresh);
   }
 
   /** 새로운 계정을 생성하고 토큰을 발급받습니다. */
@@ -51,24 +47,14 @@ class AuthService {
       agreements,
     });
 
-    cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
-      expires: COOKIE_EXPIRES.A_DAY,
-    });
-    cookies.set(COOKIE_KEYS.REFRESH_TOKEN, data.refresh, {
-      expires: COOKIE_EXPIRES.A_WEEK,
-    });
+    setAuthCookies(data.access, data.refresh);
   }
 
   /** 이미 생성된 계정의 토큰을 발급받습니다. */
   async login(email: string, password: string) {
     const { data } = await api.post("/auth/login", { email, password });
 
-    cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
-      expires: COOKIE_EXPIRES.A_DAY,
-    });
-    cookies.set(COOKIE_KEYS.REFRESH_TOKEN, data.refresh, {
-      expires: COOKIE_EXPIRES.A_WEEK,
-    });
+    setAuthCookies(data.access, data.refresh);
   }
 }
 
