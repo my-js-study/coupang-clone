@@ -1,5 +1,5 @@
-import axios from "axios";
 import cookies from "js-cookie";
+import { api } from "../utils/api";
 
 class UserService {
   async me() {
@@ -8,22 +8,17 @@ class UserService {
       return;
     }
 
-    const { data } = await axios.get(
-      process.env.NEXT_PUBLIC_API_HOST + "/users/me",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const { data } = await api.get("/users/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
     return data;
   }
 
   async read(id: number) {
-    const { data } = await axios.get(
-      process.env.NEXT_PUBLIC_API_HOST + "/users/" + id
-    );
+    const { data } = await api.get("/users/" + id);
 
     return data;
   }
