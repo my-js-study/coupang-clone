@@ -1,18 +1,17 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useQuery } from "react-query";
 
-import { UserService } from "../src/services";
-
+import useMe from "../src/hooks/query/useMe";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
-  const { data: me } = useQuery("me", UserService.me, {
+  const me = useMe({
     refetchInterval: 500,
+    onSuccess: (data) => {
+      console.log("내 정보입니다", data);
+    },
   });
-
-  console.log("내 정보입니다", me);
 
   return (
     <div className={styles.container}>
