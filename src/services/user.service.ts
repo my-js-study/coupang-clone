@@ -1,9 +1,10 @@
 import axios from "axios";
 import cookies from "js-cookie";
+import { COOKIE_KEYS } from "../constants/cookie";
 
 class UserService {
   async me() {
-    const accessToken = cookies.get("accessToken");
+    const accessToken = cookies.get(COOKIE_KEYS.ACCESS_TOKEN);
     if (!accessToken) {
       return;
     }
