@@ -1,4 +1,5 @@
 import cookies from "js-cookie";
+import { COOKIE_EXPIRES, COOKIE_KEYS } from "../constants/cookie";
 import { api } from "../utils/api";
 
 type SignupAgreements = {
@@ -15,7 +16,7 @@ type SignupAgreements = {
 class AuthService {
   /** refreshToken을 이용해 새로운 토큰을 발급받습니다. */
   async refresh() {
-    const refreshToken = cookies.get("refreshToken");
+    const refreshToken = cookies.get(COOKIE_KEYS.REFRESH_TOKEN);
     if (!refreshToken) {
       return;
     }
@@ -26,8 +27,12 @@ class AuthService {
       },
     });
 
-    cookies.set("accessToken", data.access, { expires: 1 });
-    cookies.set("refreshToken", data.refresh, { expires: 7 });
+    cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
+      expires: COOKIE_EXPIRES.A_DAY,
+    });
+    cookies.set(COOKIE_KEYS.REFRESH_TOKEN, data.refresh, {
+      expires: COOKIE_EXPIRES.A_WEEK,
+    });
   }
 
   /** 새로운 계정을 생성하고 토큰을 발급받습니다. */
@@ -46,16 +51,24 @@ class AuthService {
       agreements,
     });
 
-    cookies.set("accessToken", data.access, { expires: 1 });
-    cookies.set("refreshToken", data.refresh, { expires: 7 });
+    cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
+      expires: COOKIE_EXPIRES.A_DAY,
+    });
+    cookies.set(COOKIE_KEYS.REFRESH_TOKEN, data.refresh, {
+      expires: COOKIE_EXPIRES.A_WEEK,
+    });
   }
 
   /** 이미 생성된 계정의 토큰을 발급받습니다. */
   async login(email: string, password: string) {
     const { data } = await api.post("/auth/login", { email, password });
 
-    cookies.set("accessToken", data.access, { expires: 1 });
-    cookies.set("refreshToken", data.refresh, { expires: 7 });
+    cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
+      expires: COOKIE_EXPIRES.A_DAY,
+    });
+    cookies.set(COOKIE_KEYS.REFRESH_TOKEN, data.refresh, {
+      expires: COOKIE_EXPIRES.A_WEEK,
+    });
   }
 }
 
