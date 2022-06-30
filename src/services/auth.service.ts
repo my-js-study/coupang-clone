@@ -1,6 +1,7 @@
 import axios from "axios";
 import cookies from "js-cookie";
 import { COOKIE_EXPIRES, COOKIE_KEYS } from "../constants/cookie";
+import Service from "./service";
 
 type SignupAgreements = {
   privacy: boolean;
@@ -13,7 +14,7 @@ type SignupAgreements = {
     | false;
 };
 
-class AuthService {
+class AuthService extends Service {
   /** refreshToken을 이용해 새로운 토큰을 발급받습니다. */
   async refresh() {
     const refreshToken = cookies.get(COOKIE_KEYS.REFRESH_TOKEN);
@@ -21,15 +22,11 @@ class AuthService {
       return;
     }
 
-    const { data } = await axios.post(
-      process.env.NEXT_PUBLIC_API_HOST + "/auth/refresh",
-      null,
-      {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`,
-        },
-      }
-    );
+    const { data } = await this.api.post("/auth/refresh", null, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    });
 
     cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
       expires: COOKIE_EXPIRES.A_DAY,
@@ -47,10 +44,13 @@ class AuthService {
     phoneNumber: string,
     agreements: SignupAgreements
   ) {
-    const { data } = await axios.post(
-      process.env.NEXT_PUBLIC_API_HOST + "/auth/signup",
-      { email, password, name, phoneNumber, agreements }
-    );
+    const { data } = await this.api.post("/auth/signup", {
+      email,
+      password,
+      name,
+      phoneNumber,
+      agreements,
+    });
 
     cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
       expires: COOKIE_EXPIRES.A_DAY,
@@ -62,10 +62,7 @@ class AuthService {
 
   /** 이미 생성된 계정의 토큰을 발급받습니다. */
   async login(email: string, password: string) {
-    const { data } = await axios.post(
-      process.env.NEXT_PUBLIC_API_HOST + "/auth/login",
-      { email, password }
-    );
+    const { data } = await this.api.post("/auth/login", { email, password });
 
     cookies.set(COOKIE_KEYS.ACCESS_TOKEN, data.access, {
       expires: COOKIE_EXPIRES.A_DAY,
